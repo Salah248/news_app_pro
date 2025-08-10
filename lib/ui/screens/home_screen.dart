@@ -99,7 +99,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemBuilder: (context, index) => CustomSection(
                     title: 'Apple Unveils Revolutionary AI Features',
                     subTitle: 'Salah . May 1, 2025',
-                    onTap: () {},
+                    onTap: () {
+                      context.push(Routes.article);
+                    },
                   ),
                 ),
               ],

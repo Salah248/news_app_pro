@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:news_app_pro/resources/routes_manager.dart';
 import 'package:news_app_pro/resources/style_manage.dart';
+import 'package:news_app_pro/ui/widgets/snak_bar.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -31,7 +34,17 @@ class _SearchScreenState extends State<SearchScreen> {
                       iconSize: 24.sp,
                       padding: EdgeInsets.zero,
                       splashRadius: 1,
-                      onPressed: () {},
+                      onPressed: () {
+                        if (_searchController.text.trim().isNotEmpty ||
+                            _searchController.text != '') {
+                          context.push(Routes.searchResult);
+                        } else {
+                          showSnackBar(
+                            context,
+                            'Please enter valid something to search',
+                          );
+                        }
+                      },
                       icon: Icon(Icons.search, color: Colors.grey.shade500),
                     ),
                     suffixIcon: IconButton(
