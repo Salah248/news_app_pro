@@ -7,8 +7,11 @@ import 'package:news_app_pro/ui/screens/search_screen.dart';
 
 class Routes {
   static const String home = '/';
+
   static const String search = '/search';
+
   static const String searchResult = '/searchResult';
+
   static const String article = '/article';
 }
 
@@ -36,7 +39,7 @@ class RoutesManager {
       GoRoute(
         path: Routes.article,
         builder: (context, state) {
-          return const ArticleScreen();
+          return ArticleScreen(article: state.extra as Articles?);
         },
       ),
     ],

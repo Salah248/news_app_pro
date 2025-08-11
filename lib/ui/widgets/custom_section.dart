@@ -1,6 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:news_app_pro/data/model/news_model.dart';
+import 'package:news_app_pro/resources/routes_manager.dart';
 import 'package:news_app_pro/resources/style_manage.dart';
 import 'package:news_app_pro/ui/widgets/custom_cahed_network_image.dart';
 
@@ -12,12 +15,14 @@ class CustomSection extends StatelessWidget {
     this.imageName,
     this.createdAt,
     this.onTap,
+    this.article,
   });
   final String? title;
   final String? subTitle;
   final String? createdAt;
   final String? imageName;
   final void Function()? onTap;
+  final Articles? article;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +30,13 @@ class CustomSection extends StatelessWidget {
       contentPadding: EdgeInsets.zero,
       minTileHeight: 80.h,
       titleAlignment: ListTileTitleAlignment.top,
-      onTap: onTap,
+      onTap: () {
+        if (article == null) return;
+        context.push(
+          Routes.article,
+          extra: article, // ✅ إرسال المقالة نفسها
+        );
+      },
       trailing: Container(
         width: 100.w,
         height: 80.h,

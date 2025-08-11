@@ -41,6 +41,7 @@ class SearchResultScreen extends StatelessWidget {
                     subTitle: article.author ?? 'Unknown',
                     createdAt: article.publishedAt ?? 'Unknown',
                     imageName: article.urlToImage ?? 'asset/images/test_ui.png',
+                    article: article,
                   ),
                 );
               },

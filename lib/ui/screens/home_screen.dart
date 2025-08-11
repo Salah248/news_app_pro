@@ -144,6 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           subTitle: article[index].author ?? '',
                           imageName: article[index].urlToImage ?? '',
                           createdAt: article[index].publishedAt,
+                          article: article[index],
                         );
                       },
                     ),
