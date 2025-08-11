@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:news_app_pro/data/model/news_model.dart';
 import 'package:news_app_pro/ui/screens/article_screen.dart';
 import 'package:news_app_pro/ui/screens/home_screen.dart';
 import 'package:news_app_pro/ui/screens/search_result_screen.dart';
@@ -29,7 +30,7 @@ class RoutesManager {
       GoRoute(
         path: Routes.searchResult,
         builder: (context, state) {
-          return const SearchResultScreen();
+          return SearchResultScreen(result: state.extra as List<Articles>?);
         },
       ),
       GoRoute(

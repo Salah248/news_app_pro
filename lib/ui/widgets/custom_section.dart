@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:news_app_pro/resources/style_manage.dart';
+import 'package:news_app_pro/ui/widgets/custom_cahed_network_image.dart';
 
 class CustomSection extends StatelessWidget {
   const CustomSection({
@@ -8,10 +10,12 @@ class CustomSection extends StatelessWidget {
     this.title,
     this.subTitle,
     this.imageName,
+    this.createdAt,
     this.onTap,
   });
   final String? title;
   final String? subTitle;
+  final String? createdAt;
   final String? imageName;
   final void Function()? onTap;
 
@@ -27,16 +31,24 @@ class CustomSection extends StatelessWidget {
         height: 80.h,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.r)),
-        child: Image.asset(
-          width: 100.w,
-          height: 80.h,
-          imageName ?? 'asset/images/test_ui.png',
-          fit: BoxFit.cover,
-        ),
+        child: CustomCachedNetworkImage(imageUrl: imageName!),
       ),
       minLeadingWidth: 0,
       title: Text(title ?? '', style: StyleManager.bodyTitle, maxLines: 2),
-      subtitle: Text(subTitle ?? '', style: StyleManager.bodySubTitle),
+      subtitle: Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(text: subTitle ?? ''),
+            const TextSpan(text: ' · '),
+            TextSpan(
+              text: DateFormat(
+                'MMM d, yyyy',
+              ).format(DateTime.parse(createdAt ?? DateTime.now().toString())),
+            ),
+          ],
+        ),
+        style: StyleManager.bodySubTitle,
+      ),
     );
   }
 }

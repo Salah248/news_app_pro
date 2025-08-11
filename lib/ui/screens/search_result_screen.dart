@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:news_app_pro/data/model/news_model.dart';
 import 'package:news_app_pro/resources/color_manager.dart';
 import 'package:news_app_pro/resources/style_manage.dart';
 import 'package:news_app_pro/ui/widgets/custom_section.dart';
 
-class SearchResultScreen extends StatefulWidget {
-  const SearchResultScreen({super.key});
+class SearchResultScreen extends StatelessWidget {
+  final List<Articles>? result;
 
-  @override
-  State<SearchResultScreen> createState() => _SearchResultScreenState();
-}
+  const SearchResultScreen({super.key, this.result});
 
-class _SearchResultScreenState extends State<SearchResultScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,20 +27,24 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           icon: const Icon(Icons.arrow_back, color: ColorManager.primaryColor),
         ),
       ),
-      body: ListView.builder(
-        padding: EdgeInsets.symmetric(horizontal: 32.r),
-        itemCount: 10,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: EdgeInsets.only(top: 24.r),
-            child: const CustomSection(
-              title: 'Apple Unveils Revolutionary AI Features ',
-              subTitle: 'Abdallah - May 3, 2023',
-              imageName: 'asset/images/test_ui.png',
+      body: result == null || result!.isEmpty
+          ? const Center(child: Text('No results'))
+          : ListView.builder(
+              padding: EdgeInsets.symmetric(horizontal: 32.r),
+              itemCount: result!.length,
+              itemBuilder: (context, index) {
+                final article = result![index];
+                return Padding(
+                  padding: EdgeInsets.only(top: 24.r),
+                  child: CustomSection(
+                    title: article.title ?? '',
+                    subTitle: article.author ?? 'Unknown',
+                    createdAt: article.publishedAt ?? 'Unknown',
+                    imageName: article.urlToImage ?? 'asset/images/test_ui.png',
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:news_app_pro/data/services/dio_services.dart';
 import 'package:news_app_pro/resources/routes_manager.dart';
 import 'package:news_app_pro/resources/style_manage.dart';
 import 'package:news_app_pro/ui/widgets/snak_bar.dart';
@@ -34,14 +35,23 @@ class _SearchScreenState extends State<SearchScreen> {
                       iconSize: 24.sp,
                       padding: EdgeInsets.zero,
                       splashRadius: 1,
-                      onPressed: () {
-                        if (_searchController.text.trim().isNotEmpty ||
-                            _searchController.text != '') {
-                          context.push(Routes.searchResult);
+                      onPressed: () async {
+                        final query = _searchController.text.trim();
+                        if (query.isNotEmpty) {
+                          final result = await DioServices().searchNews(query);
+                          if (result != null && result.articles != null) {
+                            _searchController.clear();
+                            context.push(
+                              Routes.searchResult,
+                              extra: result.articles,
+                            );
+                          } else {
+                            showSnackBar(context, 'No results found');
+                          }
                         } else {
                           showSnackBar(
                             context,
-                            'Please enter valid something to search',
+                            'Please enter something to search',
                           );
                         }
                       },
