@@ -1,8 +1,10 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:news_app_pro/data/model/news_model.dart';
 import 'package:news_app_pro/resources/color_manager.dart';
+import 'package:news_app_pro/resources/string_manager.dart';
 import 'package:news_app_pro/resources/style_manage.dart';
 import 'package:news_app_pro/ui/widgets/custom_section.dart';
 
@@ -17,7 +19,7 @@ class SearchResultScreen extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          'Search Result',
+          AppStrings.searchResult.tr(),
           style: StyleManager.heading.copyWith(fontSize: 18.sp),
         ),
         elevation: 0,
@@ -28,7 +30,7 @@ class SearchResultScreen extends StatelessWidget {
         ),
       ),
       body: result == null || result!.isEmpty
-          ? const Center(child: Text('No results'))
+          ? Center(child: Text(AppStrings.noResults.tr()))
           : ListView.builder(
               padding: EdgeInsets.symmetric(horizontal: 32.r),
               itemCount: result!.length,

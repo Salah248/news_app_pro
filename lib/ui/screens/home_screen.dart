@@ -6,6 +6,7 @@ import 'package:news_app_pro/data/model/news_model.dart';
 import 'package:news_app_pro/data/services/dio_services.dart';
 import 'package:news_app_pro/resources/color_manager.dart';
 import 'package:news_app_pro/resources/routes_manager.dart';
+import 'package:news_app_pro/resources/string_manager.dart';
 import 'package:news_app_pro/resources/style_manage.dart';
 import 'package:news_app_pro/ui/widgets/custom_cahed_network_image.dart';
 import 'package:news_app_pro/ui/widgets/custom_section.dart';
@@ -48,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(width: 20.w),
         ],
         backgroundColor: const Color(0xffE9EEFA),
-        title: Text('Explore', style: StyleManager.heading),
+        title: Text(AppStrings.explore.tr(), style: StyleManager.heading),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,13 +64,13 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: EdgeInsets.symmetric(horizontal: 32.w),
               scrollDirection: Axis.horizontal,
               children: [
-                _customCategory(title: 'Travel'),
+                _customCategory(title: AppStrings.travel.tr()),
                 SizedBox(width: 12.w),
-                _customCategory(title: 'Technology'),
+                _customCategory(title: AppStrings.technology.tr()),
                 SizedBox(width: 12.w),
-                _customCategory(title: 'Business'),
+                _customCategory(title: AppStrings.business.tr()),
                 SizedBox(width: 12.w),
-                _customCategory(title: 'Entertainment'),
+                _customCategory(title: AppStrings.entertainment.tr()),
               ],
             ),
           ),
@@ -83,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 return Center(child: Text(snapshot.error.toString()));
               } else if (!snapshot.hasData ||
                   snapshot.data!.articles!.isEmpty) {
-                return const Center(child: Text('No news available'));
+                return Center(child: Text(AppStrings.noResultsFound.tr()));
               }
               final article = snapshot.data!.articles!;
               return Expanded(

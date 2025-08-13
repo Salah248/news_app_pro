@@ -1,9 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:news_app_pro/data/services/dio_services.dart';
 import 'package:news_app_pro/resources/routes_manager.dart';
+import 'package:news_app_pro/resources/string_manager.dart';
 import 'package:news_app_pro/resources/style_manage.dart';
 import 'package:news_app_pro/ui/widgets/snak_bar.dart';
 
@@ -36,24 +38,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       padding: EdgeInsets.zero,
                       splashRadius: 1,
                       onPressed: () async {
-                        final query = _searchController.text.trim();
-                        if (query.isNotEmpty) {
-                          final result = await DioServices().searchNews(query);
-                          if (result != null && result.articles != null) {
-                            _searchController.clear();
-                            context.push(
-                              Routes.searchResult,
-                              extra: result.articles,
-                            );
-                          } else {
-                            showSnackBar(context, 'No results found');
-                          }
-                        } else {
-                          showSnackBar(
-                            context,
-                            'Please enter something to search',
-                          );
-                        }
+                        await _searchMethod(context);
                       },
                       icon: Icon(Icons.search, color: Colors.grey.shade500),
                     ),
@@ -85,7 +70,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       borderSide: BorderSide(color: Colors.grey.shade400),
                     ),
                     hint: Text(
-                      'Search',
+                      AppStrings.search.tr(),
                       style: StyleManager.bodySubTitle.copyWith(
                         fontSize: 18.sp,
                       ),
@@ -99,7 +84,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   Navigator.pop(context);
                 },
                 child: Text(
-                  'Cancel',
+                  AppStrings.cancel.tr(),
                   style: GoogleFonts.schibstedGrotesk(
                     color: const Color(0xff0E0AB1),
                     fontSize: 14.sp,
@@ -112,6 +97,21 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _searchMethod(BuildContext context) async {
+    final query = _searchController.text.trim();
+    if (query.isNotEmpty) {
+      final result = await DioServices().searchNews(query);
+      if (result != null && result.articles != null) {
+        _searchController.clear();
+        context.push(Routes.searchResult, extra: result.articles);
+      } else {
+        showSnackBar(context, AppStrings.noResultsFound.tr());
+      }
+    } else {
+      showSnackBar(context, AppStrings.pleaseEnterSomething.tr());
+    }
   }
 
   @override
