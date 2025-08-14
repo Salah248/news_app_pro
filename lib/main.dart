@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:news_app_pro/resources/constants.dart';
 import 'package:news_app_pro/resources/routes_manager.dart';
 import 'package:news_app_pro/resources/theme.dart';
 
@@ -11,7 +12,8 @@ void main() async {
     EasyLocalization(
       supportedLocales: const [Locale('en'), Locale('ar')],
       path: 'asset/translation',
-      fallbackLocale: const Locale('ar'),
+      fallbackLocale: const Locale('en'),
+      startLocale: Locale(Constants.languageCode),
       child: const MyApp(),
     ),
   );

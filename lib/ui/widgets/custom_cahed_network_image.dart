@@ -11,7 +11,7 @@ class CustomCachedNetworkImage extends StatelessWidget {
     this.width,
     this.height,
   });
-  final String imageUrl;
+  final String? imageUrl;
   final double? width;
   final double? height;
 
@@ -21,7 +21,9 @@ class CustomCachedNetworkImage extends StatelessWidget {
       width: width,
       height: height,
       child: CachedNetworkImage(
-        imageUrl: imageUrl,
+        imageUrl:
+            imageUrl ??
+            'https://images.unsplash.com/photo-1574857030124-184547652907?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80',
         fit: BoxFit.cover,
         errorWidget: (context, url, error) {
           log('error: $error');

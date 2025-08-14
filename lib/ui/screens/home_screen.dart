@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:news_app_pro/data/model/news_model.dart';
 import 'package:news_app_pro/data/services/dio_services.dart';
 import 'package:news_app_pro/resources/color_manager.dart';
+import 'package:news_app_pro/resources/constants.dart';
 import 'package:news_app_pro/resources/routes_manager.dart';
 import 'package:news_app_pro/resources/string_manager.dart';
 import 'package:news_app_pro/resources/style_manage.dart';
@@ -41,6 +42,17 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         titleSpacing: 32.w,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.language, color: ColorManager.primaryColor),
+          onPressed: () {
+            if (context.locale.languageCode == 'en') {
+              context.setLocale(const Locale('ar'));
+            } else {
+              context.setLocale(const Locale('en'));
+            }
+            Constants.languageCode = context.locale.languageCode;
+          },
+        ),
         actions: [
           IconButton(
             onPressed: () => context.push(Routes.search),
@@ -131,6 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ],
                             ),
                             style: StyleManager.bodySubTitle,
+                            maxLines: 1,
                           ),
                         ],
                       ),
@@ -138,7 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: 10,
+                      itemCount: article.length <= 10 ? article.length : 12,
                       itemBuilder: (context, index) {
                         return CustomSection(
                           title: article[index].title ?? '',

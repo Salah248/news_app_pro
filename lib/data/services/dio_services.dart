@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:news_app_pro/data/model/news_model.dart';
+import 'package:news_app_pro/resources/constants.dart';
 import 'package:news_app_pro/resources/sencetive_data.dart';
 
 class DioServices {
@@ -22,7 +23,7 @@ class DioServices {
     log('getNews called');
     try {
       final response = await dio!.get(
-        '${SensitiveData.baseUrl}everything?q=$category&sortBy=popularity',
+        '${SensitiveData.baseUrl}everything?q=$category&sortBy=popularity&language=${Constants.languageCode}',
       );
       log('response: ${response.statusCode}');
       if (response.statusCode! <= 200 && response.statusCode! < 300) {
