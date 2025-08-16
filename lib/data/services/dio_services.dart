@@ -26,7 +26,7 @@ class DioServices {
         '${SensitiveData.baseUrl}everything?q=$category&sortBy=popularity&language=${Constants.languageCode}',
       );
       log('response: ${response.statusCode}');
-      if (response.statusCode! <= 200 && response.statusCode! < 300) {
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
         final data = NewsModel.fromJson(response.data);
         log('data: ${data.articles!.first.author}');
         return data;

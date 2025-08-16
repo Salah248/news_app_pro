@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:news_app_pro/data/model/news_model.dart';
-import 'package:news_app_pro/data/services/dio_services.dart';
+import 'package:news_app_pro/cubit/news_cubit.dart';
 import 'package:news_app_pro/resources/color_manager.dart';
 import 'package:news_app_pro/resources/constants.dart';
 import 'package:news_app_pro/resources/routes_manager.dart';
@@ -22,18 +22,10 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final Color _color = Colors.transparent;
   String? _selectedCategory = 'Travel';
-  late Future<NewsModel?> _newsFuture;
   @override
   void initState() {
     super.initState();
-    _newsFuture = DioServices().getNews(_selectedCategory!);
-  }
-
-  void _changeCategory(String category) {
-    setState(() {
-      _selectedCategory = category;
-      _newsFuture = DioServices().getNews(_selectedCategory!);
-    });
+    context.read<NewsCubit>().getNews();
   }
 
   @override
@@ -50,7 +42,10 @@ class _HomeScreenState extends State<HomeScreen> {
             } else {
               context.setLocale(const Locale('en'));
             }
-            Constants.languageCode = context.locale.languageCode;
+            setState(() {
+              Constants.languageCode = context.locale.languageCode;
+            });
+            context.read<NewsCubit>().getNews(category: _selectedCategory);
           },
         ),
         actions: [
@@ -87,83 +82,90 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           SizedBox(height: 24.h),
-          FutureBuilder<NewsModel?>(
-            future: _newsFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text(snapshot.error.toString()));
-              } else if (!snapshot.hasData ||
-                  snapshot.data!.articles!.isEmpty) {
-                return Center(child: Text(AppStrings.noResultsFound.tr()));
+          BlocBuilder<NewsCubit, NewsState>(
+            builder: (context, state) {
+              //      final news = context.read<NewsCubit>();
+              if (state is NewsLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(
+                    color: ColorManager.primaryColor,
+                  ),
+                );
               }
-              final article = snapshot.data!.articles!;
-              return Expanded(
-                child: ListView(
-                  padding: EdgeInsets.symmetric(horizontal: 32.w),
-                  shrinkWrap: true,
-                  children: [
-                    SizedBox(
-                      width: 366.w,
-                      height: 292.h,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            width: 366.w,
-                            height: 206.h,
-                            clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.r),
+              if (state is NewsSuccess) {
+                final article = state.response!.articles;
+                return Expanded(
+                  child: ListView(
+                    padding: EdgeInsets.symmetric(horizontal: 32.w),
+                    shrinkWrap: true,
+                    children: [
+                      SizedBox(
+                        width: 366.w,
+                        height: 292.h,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width: 366.w,
+                              height: 206.h,
+                              clipBehavior: Clip.antiAlias,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.r),
+                              ),
+                              child: CustomCachedNetworkImage(
+                                imageUrl: article!.first.urlToImage!,
+                              ),
                             ),
-                            child: CustomCachedNetworkImage(
-                              imageUrl: article.first.urlToImage!,
+                            Text(
+                              article.first.title ?? 'News Title',
+                              style: StyleManager.bodyTitle,
+                              maxLines: 2,
                             ),
-                          ),
-                          Text(
-                            article.first.title ?? 'News Title',
-                            style: StyleManager.bodyTitle,
-                            maxLines: 2,
-                          ),
-                          Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(text: article.first.author ?? ''),
-                                const TextSpan(text: ' · '),
-                                TextSpan(
-                                  text: DateFormat('MMM d, yyyy').format(
-                                    DateTime.parse(
-                                      article.first.publishedAt ??
-                                          DateTime.now().toString(),
+                            Text.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(text: article.first.author ?? ''),
+                                  const TextSpan(text: ' · '),
+                                  TextSpan(
+                                    text: DateFormat('MMM d, yyyy').format(
+                                      DateTime.parse(
+                                        article.first.publishedAt ??
+                                            DateTime.now().toString(),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
+                              style: StyleManager.bodySubTitle,
+                              maxLines: 1,
                             ),
-                            style: StyleManager.bodySubTitle,
-                            maxLines: 1,
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: article.length <= 10 ? article.length : 12,
-                      itemBuilder: (context, index) {
-                        return CustomSection(
-                          title: article[index].title ?? '',
-                          subTitle: article[index].author ?? '',
-                          imageName: article[index].urlToImage ?? '',
-                          createdAt: article[index].publishedAt,
-                          article: article[index],
-                        );
-                      },
-                    ),
-                  ],
-                ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: (article.length <= 12) ? article.length : 12,
+                        itemBuilder: (context, index) {
+                          return CustomSection(
+                            title: article[index].title ?? '',
+                            subTitle: article[index].author ?? '',
+                            imageName: article[index].urlToImage ?? '',
+                            createdAt: article[index].publishedAt,
+                            article: article[index],
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              }
+              if (state is NewsError) {
+                return Center(child: Text(state.message));
+              }
+              return Center(
+                child: Text('Loading...', style: StyleManager.bodyTitle),
               );
             },
           ),
@@ -175,7 +177,14 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _customCategory({String? title}) {
     final bool isSelected = _selectedCategory == title;
     return InkWell(
-      onTap: () => _changeCategory(title!),
+      onTap: () => {
+        setState(() {
+          _selectedCategory = title;
+        }),
+        context.read<NewsCubit>().getNews(
+          category: _selectedCategory!.toLowerCase(),
+        ),
+      },
       borderRadius: BorderRadius.circular(56.r),
       child: Container(
         width: 120.w,

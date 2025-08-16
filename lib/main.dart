@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:news_app_pro/cubit/news_cubit.dart';
 import 'package:news_app_pro/resources/constants.dart';
 import 'package:news_app_pro/resources/routes_manager.dart';
 import 'package:news_app_pro/resources/theme.dart';
@@ -14,7 +16,10 @@ void main() async {
       path: 'asset/translation',
       fallbackLocale: const Locale('en'),
       startLocale: Locale(Constants.languageCode),
-      child: const MyApp(),
+      child: BlocProvider(
+        create: (context) => NewsCubit(),
+        child: const MyApp(),
+      ),
     ),
   );
 }
